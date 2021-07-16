@@ -1,11 +1,9 @@
 # prometheus-alerts-library
 This repo contains prometheus-rule manifest to fire alerts for CPU and RAM usage by all pods.
 
-Please define values of labels in values.yaml
-And the add the same lables in your prometheus instance in field ruleSelector.matchLabels  to mount these rules. 
-
-Eg;
-
+Please define values of labels in **values.yaml**
+And the add the same lables in your prometheus instance in field `ruleSelector.matchLabels` to mount these rules. 
+> Example:
  ruleSelector:
     matchLabels:
       role: alert-rules
