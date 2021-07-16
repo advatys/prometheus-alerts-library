@@ -1,0 +1,7 @@
+apiVersion: v1
+appVersion: 1.0.0
+description: 'prometheus rule manifest'
+kubeVersion: ^1.10.0-0
+name: prometheus-rule
+# Chart version
+version: 1.0.0
