@@ -1,0 +1,31 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: CPU_RAM
+  namespace: proemtheus
+  labels:
+    {{- toYaml .Values.labels | nindent 4 }}
+spec:
+  groups:
+  - name: kubernetes-resources
+    rules:
+    - alert: POD_CPUThrottlingHigh
+      annotations:
+        description: '{{`{{`}} $value | humanizePercentage {{`}}`}} throttling of CPU in namespace {{`{{`}} $labels.namespace {{`}}`}} for container {{`{{`}} $labels.container {{`}}`}} in pod {{`{{`}} $labels.pod {{`}}`}}.'
+        summary: Processes experience elevated CPU throttling.
+      expr: |-
+        sum(increase(container_cpu_cfs_throttled_periods_total{container!="", }[5m])) by (container, pod, namespace)
+          /
+        sum(increase(container_cpu_cfs_periods_total{}[5m])) by (container, pod, namespace)
+          > ( 25 / 100 )
+      for: 5m
+      labels:
+        severity: warning
+    - alert: POD_RAM_usageAboveLimits
+      annotations:
+        description:  Usage of RAM is up by 90 percent in namespace {{ $labels.namespace }} for container {{ $labels.container }} in pod {{ $labels.pod }}.
+        summary: "Processes experience  RAM usage more the 90 percent"
+      expr: ((container_memory_working_set_bytes / container_spec_memory_limit_bytes) != +Inf) * 100 > 90
+      for: 1m
+      labels:
+        severity: warning
